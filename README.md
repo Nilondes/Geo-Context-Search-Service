@@ -190,6 +190,14 @@ git clone https://github.com/Nilondes/Geo-Context-Search-Service.git
 cd Geo-Context-Search-Service
 ```
 
+```sh
+pip install -r requirements.txt
+```
+
+```sh
+uvicorn app.main:app --reload
+```
+
 Service available at:
 
 ```sh

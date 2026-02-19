@@ -2,11 +2,15 @@ annotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.12.1
 click==8.3.1
+DAWG-Python==0.7.2
+docopt==0.6.2
 fastapi==0.129.0
 h11==0.16.0
 idna==3.11
 pydantic==2.12.5
 pydantic_core==2.41.5
+pymorphy2==0.9.1
+pymorphy2-dicts-ru==2.4.417127.4579844
 starlette==0.52.1
 typing-inspection==0.4.2
 typing_extensions==4.15.0
