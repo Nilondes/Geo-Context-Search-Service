@@ -3,11 +3,11 @@ import re
 from pathlib import Path
 from typing import Optional, List, Set
 
-import pymorphy2
+import pymorphy3
 from pydantic import BaseModel
 
 
-_MORPH = pymorphy2.MorphAnalyzer()
+_MORPH = pymorphy3.MorphAnalyzer()
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 CATEGORIES_PATH = DATA_DIR / "categories.json"
