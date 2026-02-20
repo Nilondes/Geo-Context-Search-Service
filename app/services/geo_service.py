@@ -13,15 +13,16 @@ class GeoService:
         self.repository = PlacesRepository(session)
 
     async def find_nearest_places(
-        self,
-        latitude: float,
-        longitude: float,
-        radius_m: float = 500,
-        limit: int = 10,
-        category: Optional[str] = None,
-        brand: Optional[str] = None,
+            self,
+            latitude: float,
+            longitude: float,
+            radius_m: float = 500,
+            limit: int = 10,
+            category: Optional[str] = None,
+            brand: Optional[str] = None,
     ) -> List[Place]:
-        return await self.repository.find_nearest(
+
+        rows = await self.repository.find_nearest(
             latitude=latitude,
             longitude=longitude,
             radius_m=radius_m,
@@ -29,6 +30,8 @@ class GeoService:
             category=category,
             brand=brand,
         )
+
+        return [row["place"] for row in rows]
 
     async def search(self, request: SearchRequest) -> SearchResponse:
 
@@ -61,12 +64,12 @@ class GeoService:
 
         results = [
             SearchResult(
-                name=place.name,
-                latitude=latitude,
-                longitude=longitude,
-                distance_meters=None,
+                name=item["place"].name,
+                latitude=item["latitude"],
+                longitude=item["longitude"],
+                distance_meters=item["distance_meters"],
             )
-            for place in places
+            for item in places
         ]
 
         return SearchResponse(results=results)
