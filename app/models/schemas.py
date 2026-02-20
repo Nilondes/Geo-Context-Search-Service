@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 
 
 class SearchRequest(BaseModel):
@@ -19,7 +19,7 @@ class SearchResult(BaseModel):
     name: str
     latitude: float
     longitude: float
-    distance_meters: float
+    distance_meters: Optional[float] = None
 
 
 class SearchResponse(BaseModel):
