@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional
 
 
@@ -13,6 +13,17 @@ class SearchRequest(BaseModel):
         description="Natural language search context",
         example="Купить лекарства в аптеке на Троицком"
     )
+
+    @field_validator("location")
+    @classmethod
+    def validate_location(cls, value):
+        try:
+            lat, lon = value.split(":")
+            float(lat)
+            float(lon)
+        except Exception:
+            raise ValueError("Location must be 'lat:lon'")
+        return value
 
 
 class SearchResult(BaseModel):

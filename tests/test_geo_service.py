@@ -30,4 +30,4 @@ async def test_find_nearest_places():
         )
 
         assert len(results) >= 1
-        assert results[0].name == "Test Cafe"
+        assert results[0]["place"].name == "Test Cafe"

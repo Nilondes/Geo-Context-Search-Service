@@ -6,8 +6,6 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from app.models.base import Base
-
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
@@ -25,3 +23,8 @@ AsyncSessionLocal = async_sessionmaker(
     expire_on_commit=False,
     class_=AsyncSession,
 )
+
+
+async def get_session():
+    async with AsyncSessionLocal() as session:
+        yield session

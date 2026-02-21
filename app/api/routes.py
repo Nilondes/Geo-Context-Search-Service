@@ -2,19 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
 
-from app.core.db import AsyncSessionLocal
+from app.core.db import get_session
 from app.models.schemas import SearchRequest, SearchResponse
 from app.services.geo_service import GeoService
 
 router = APIRouter()
-
-
-async def get_session() -> AsyncSession:
-    """
-    Dependency: async DB session.
-    """
-    async with AsyncSessionLocal() as session:
-        yield session
 
 
 @router.post("/search", response_model=SearchResponse, status_code=status.HTTP_200_OK)

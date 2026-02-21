@@ -2,7 +2,6 @@ from typing import Optional, List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.place import Place
 from app.models.schemas import SearchRequest, SearchResponse, SearchResult
 from app.repositories.places_repository import PlacesRepository
 from app.services.context_parser import parse_context
@@ -20,7 +19,7 @@ class GeoService:
             limit: int = 10,
             category: Optional[str] = None,
             brand: Optional[str] = None,
-    ) -> List[Place]:
+    ) -> List[dict]:
 
         rows = await self.repository.find_nearest(
             latitude=latitude,
@@ -31,7 +30,7 @@ class GeoService:
             brand=brand,
         )
 
-        return [row["place"] for row in rows]
+        return rows
 
     async def search(self, request: SearchRequest) -> SearchResponse:
 
@@ -64,12 +63,12 @@ class GeoService:
 
         results = [
             SearchResult(
-                name=item["place"].name,
-                latitude=item["latitude"],
-                longitude=item["longitude"],
-                distance_meters=item["distance_meters"],
+                name=place_dict["place"].name,
+                latitude=place_dict["latitude"],
+                longitude=place_dict["longitude"],
+                distance_meters=place_dict["distance_meters"],
             )
-            for item in places
+            for place_dict in places
         ]
 
         return SearchResponse(results=results)
