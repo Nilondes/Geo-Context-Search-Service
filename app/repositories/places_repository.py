@@ -17,7 +17,7 @@ class PlacesRepository:
         latitude: float,
         longitude: float,
         radius_m: float = 500,
-        limit: int = 10,
+        limit: int = 5,
         category: Optional[str] = None,
         brand: Optional[str] = None,
     ) -> List[dict]:

@@ -1,33 +1,75 @@
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.db import AsyncSessionLocal
 from app.models.place import Place
 from app.services.geo_service import GeoService
 
 
 @pytest.mark.asyncio
-async def test_find_nearest_places():
-    async with AsyncSessionLocal() as session:
-        place = Place(
-            name="Test Cafe",
-            category="cafe",
-            brand="TestBrand",
-            address="Archangelsk",
-            geog="SRID=4326;POINT(37.6176 55.7558)",
-            source="test",
-        )
+async def test_find_nearest_places_archangelsk_radius_filter(db_session):
+    near_place = Place(
+        name="Аптека на Троицком",
+        category="аптека",
+        brand=None,
+        address="Троицкий проспект, 35",
+        geog="SRID=4326;POINT(40.5386 64.5426)",
+        source="test",
+    )
+    far_place = Place(
+        name="Аптека Далеко",
+        category="аптека",
+        brand=None,
+        address="Отдаленный район",
+        geog="SRID=4326;POINT(40.5600 64.5500)",
+        source="test",
+    )
 
-        session.add(place)
-        await session.commit()
+    db_session.add_all([near_place, far_place])
+    await db_session.commit()
 
-        service = GeoService(session)
+    service = GeoService(db_session)
 
-        results = await service.find_nearest_places(
-            latitude=55.7558,
-            longitude=37.6176,
-            radius_m=1000,
-        )
+    results = await service.find_nearest_places(
+        latitude=64.5430,
+        longitude=40.5369,
+        radius_m=500,
+    )
 
-        assert len(results) >= 1
-        assert results[0]["place"].name == "Test Cafe"
+    names = [r["place"].name for r in results]
+    assert "Аптека на Троицком" in names
+    assert "Аптека Далеко" not in names
+
+
+@pytest.mark.asyncio
+async def test_find_nearest_places_brand_and_category_filter(db_session):
+    magnet = Place(
+        name="Магнит",
+        category="продукты",
+        brand="Магнит",
+        address="Набережная Северной Двины, 30",
+        geog="SRID=4326;POINT(40.5379 64.5419)",
+        source="test",
+    )
+    pyaterochka = Place(
+        name="Пятёрочка",
+        category="продукты",
+        brand="Пятёрочка",
+        address="Воскресенская ул., 16",
+        geog="SRID=4326;POINT(40.5384 64.5439)",
+        source="test",
+    )
+
+    db_session.add_all([magnet, pyaterochka])
+    await db_session.commit()
+
+    service = GeoService(db_session)
+
+    results = await service.find_nearest_places(
+        latitude=64.5430,
+        longitude=40.5369,
+        radius_m=500,
+        category="продукты",
+        brand="Магнит",
+    )
+
+    assert len(results) >= 1
+    assert all(r["place"].brand == "Магнит" for r in results)

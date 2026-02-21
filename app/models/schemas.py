@@ -6,7 +6,7 @@ class SearchRequest(BaseModel):
     location: str = Field(
         ...,
         description="Coordinates in format 'latitude:longitude'",
-        example="64.5401:40.5433"
+        example="64.5430:40.5369"
     )
     context: str = Field(
         ...,
