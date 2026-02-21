@@ -16,9 +16,10 @@ class GeoService:
             latitude: float,
             longitude: float,
             radius_m: float = 500,
-            limit: int = 10,
+            limit: int = 5,
             category: Optional[str] = None,
             brand: Optional[str] = None,
+            street: Optional[str] = None,
     ) -> List[dict]:
 
         rows = await self.repository.find_nearest(
@@ -28,6 +29,7 @@ class GeoService:
             limit=limit,
             category=category,
             brand=brand,
+            street=street,
         )
 
         return rows
@@ -45,6 +47,7 @@ class GeoService:
 
         category = _get(parsed, "category")
         brand = _get(parsed, "brand")
+        street = _get(parsed, "street")
 
         try:
             lat_str, lon_str = request.location.split(":")
@@ -59,6 +62,7 @@ class GeoService:
             longitude=longitude,
             category=category,
             brand=brand,
+            street=street,
         )
 
         results = [

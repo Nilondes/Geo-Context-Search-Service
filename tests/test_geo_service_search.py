@@ -54,6 +54,7 @@ async def test_search_parses_context_and_calls_repository():
             longitude=40.5369,
             category="продукты",
             brand="Магнит",
+            street=None,
         )
 
         assert len(response.results) == 1

@@ -57,7 +57,7 @@ def _tokens(text: str) -> List[str]:
 
 
 def _lemmatize_token(token: str) -> str:
-    # return normal form (lemma) from pymorphy2
+    # return normal form (lemma) from pymorphy3
     parsed = _MORPH.parse(token)
     if parsed:
         return parsed[0].normal_form
@@ -102,10 +102,16 @@ def _detect_street(original_text: str, normalized_text: str) -> Optional[str]:
         if m:
             street_raw = m.group(1).strip()
             street_raw = re.sub(r"\s+(улица|ул|проспект|пр|пер|переулок|район)$", "", street_raw, flags=re.IGNORECASE)
-            return street_raw.lower()
+            street_norm = street_raw.lower()
+            tokens = _tokens(street_norm)
+            lemmas = _lemmatize_list(tokens)
+            return " ".join(lemmas).strip()
     m2 = re.search(r"на\s+([а-яa-z0-9\-\s]+)$", normalized_text)
     if m2:
-        return m2.group(1).strip().lower()
+        street_norm = m2.group(1).strip().lower()
+        tokens = _tokens(street_norm)
+        lemmas = _lemmatize_list(tokens)
+        return " ".join(lemmas).strip()
     return None
 
 
@@ -151,7 +157,7 @@ def parse_context(text: str) -> ParsedContext:
     """
     Parse Russian natural-language search context into structured ParsedContext.
 
-    Requires pymorphy2 installed.
+    Requires pymorphy3 installed.
 
     Returns:
         ParsedContext(category, brand, street)

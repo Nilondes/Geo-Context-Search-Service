@@ -73,3 +73,40 @@ async def test_find_nearest_places_brand_and_category_filter(db_session):
 
     assert len(results) >= 1
     assert all(r["place"].brand == "Магнит" for r in results)
+
+
+@pytest.mark.asyncio
+async def test_find_nearest_places_street_filter(db_session):
+    troitsky = Place(
+        name="Аптека на Троицком",
+        category="аптека",
+        brand=None,
+        address="Троицкий проспект, 35",
+        geog="SRID=4326;POINT(40.5386 64.5426)",
+        source="test",
+    )
+    voskresenskaya = Place(
+        name="Аптека на Воскресенской",
+        category="аптека",
+        brand=None,
+        address="Воскресенская ул., 3",
+        geog="SRID=4326;POINT(40.5352 64.5440)",
+        source="test",
+    )
+
+    db_session.add_all([troitsky, voskresenskaya])
+    await db_session.commit()
+
+    service = GeoService(db_session)
+
+    results = await service.find_nearest_places(
+        latitude=64.5430,
+        longitude=40.5369,
+        radius_m=500,
+        category="аптека",
+        street="Троицк",
+    )
+
+    names = [r["place"].name for r in results]
+    assert "Аптека на Троицком" in names
+    assert "Аптека на Воскресенской" not in names

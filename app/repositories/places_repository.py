@@ -20,6 +20,7 @@ class PlacesRepository:
         limit: int = 5,
         category: Optional[str] = None,
         brand: Optional[str] = None,
+        street: Optional[str] = None,
     ) -> List[dict]:
 
         point = func.ST_SetSRID(
@@ -46,6 +47,9 @@ class PlacesRepository:
 
         if brand:
             stmt = stmt.where(Place.brand == brand)
+
+        if street:
+            stmt = stmt.where(func.lower(Place.address).ilike(f"%{street.lower()}%"))
 
         result = await self.session.execute(stmt)
         rows = result.all()
