@@ -5,24 +5,28 @@ services:
     image: postgis/postgis:15-3.4
     container_name: geo_search_db
     restart: always
+    env_file:
+      - .env
     environment:
-      POSTGRES_DB: geo_search
-      POSTGRES_USER: geo
-      POSTGRES_PASSWORD: geo_password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "5433:5432"
+      - "${DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   test_db:
     image: postgis/postgis:15-3.4
     container_name: geo_search_test_db
+    env_file:
+      - .env
     environment:
-      POSTGRES_DB: test_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${TEST_DB_NAME}
+      POSTGRES_USER: ${TEST_DB_USER}
+      POSTGRES_PASSWORD: ${TEST_DB_PASSWORD}
     ports:
-      - "5434:5432"
+      - "${TEST_DB_PORT}:5432"
 
 volumes:
   postgres_data:

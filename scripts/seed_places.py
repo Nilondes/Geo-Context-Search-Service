@@ -10,12 +10,24 @@ from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from app.models.place import Place
+from app.core.env import load_env
 
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+asyncpg://geo:geo_password@localhost:5433/geo_search",
-)
+def _build_database_url() -> str:
+    url = os.getenv("DATABASE_URL")
+    if url:
+        return url
+    host = os.getenv("DB_HOST")
+    port = os.getenv("DB_PORT")
+    name = os.getenv("DB_NAME")
+    user = os.getenv("DB_USER")
+    password = os.getenv("DB_PASSWORD")
+    if all([host, port, name, user, password]):
+        return f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{name}"
+    raise RuntimeError("DATABASE_URL or DB_* environment variables must be set")
+
+
+DATABASE_URL = _build_database_url()
 
 
 CENTER_LAT = 64.5430
@@ -248,3 +260,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+load_env()
