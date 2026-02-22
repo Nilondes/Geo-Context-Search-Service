@@ -24,3 +24,5 @@ var/
 wheels/
 .installed.cfg
 /.env.dev.pg
+/.env
+/.venv/

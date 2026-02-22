@@ -1,7 +1,12 @@
+import uvicorn
 from fastapi import FastAPI
+from app.api.routes import router as api_router
 
 app = FastAPI(title="Geo Context Search Service")
 
-@app.get("/")
-async def root():
-    return {"message": "Geo Context Search Service is running"}
+
+app.include_router(api_router, prefix="")
+
+
+if __name__ == "__main__":
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
