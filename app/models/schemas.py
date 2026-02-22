@@ -25,6 +25,10 @@ class SearchRequest(BaseModel):
             raise ValueError("Location must be 'lat:lon'")
         return value
 
+    def parse_location(self) -> tuple[float, float]:
+        lat, lon = self.location.split(":")
+        return float(lat.strip()), float(lon.strip())
+
 
 class SearchResult(BaseModel):
     name: str

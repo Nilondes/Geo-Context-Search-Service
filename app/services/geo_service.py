@@ -38,23 +38,14 @@ class GeoService:
 
         parsed = parse_context(request.context)
 
-        def _get(obj, key):
-            if obj is None:
-                return None
-            if isinstance(obj, dict):
-                return obj.get(key)
-            return getattr(obj, key, None)
-
-        category = _get(parsed, "category")
-        brand = _get(parsed, "brand")
-        street = _get(parsed, "street")
-
         try:
-            lat_str, lon_str = request.location.split(":")
-            latitude = float(lat_str.strip())
-            longitude = float(lon_str.strip())
+            latitude, longitude = request.parse_location()
         except Exception:
             return SearchResponse(results=[])
+
+        category = parsed.category
+        brand = parsed.brand
+        street = parsed.street
 
 
         places = await self.find_nearest_places(

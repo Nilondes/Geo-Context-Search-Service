@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import AsyncMock, patch
 
 from app.services.geo_service import GeoService
+from app.services.context_parser import ParsedContext
 from app.models.schemas import SearchRequest
 from app.models.place import Place
 
@@ -13,10 +14,10 @@ async def test_search_parses_context_and_calls_repository():
     service = GeoService(session)
 
     with patch("app.services.geo_service.parse_context") as mock_parser:
-        mock_parser.return_value = {
-            "category": "продукты",
-            "brand": "Магнит",
-        }
+        mock_parser.return_value = ParsedContext(
+            category="продукты",
+            brand="Магнит",
+        )
 
         fake_place = Place(
             id=1,
