@@ -3,14 +3,23 @@ import asyncio
 import math
 import os
 import random
+import sys
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List, Optional
 
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
+ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
 from app.models.place import Place
 from app.core.env import load_env
+
+
+load_env()
 
 
 def _build_database_url() -> str:
