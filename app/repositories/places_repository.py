@@ -1,6 +1,7 @@
 from typing import Optional, List
 
 from sqlalchemy import select, func, cast
+from sqlalchemy.types import Numeric
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from geoalchemy2 import Geometry
@@ -29,7 +30,7 @@ class PlacesRepository:
         )
 
         # PostGIS distance in meters when using geography columns.
-        distance_expr = func.ST_Distance(Place.geog, point)
+        distance_expr = func.round(cast(func.ST_Distance(Place.geog, point), Numeric), 2)
 
         stmt = (
             select(
