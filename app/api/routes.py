@@ -18,8 +18,10 @@ async def search_endpoint(
     High-level endpoint: parse context -> geo search -> return results.
     """
     try:
+        # Keep orchestration in the service layer; endpoint stays thin.
         service = GeoService(session)
         response = await service.search(request)
         return response
     except Exception as exc:
+        # Fail fast with a generic 500 to avoid leaking internal errors.
         raise HTTPException(status_code=500, detail=str(exc))

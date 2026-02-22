@@ -9,6 +9,7 @@ from app.services.context_parser import parse_context
 
 class GeoService:
     def __init__(self, session: AsyncSession):
+        # Repository encapsulates all DB-specific geo queries.
         self.repository = PlacesRepository(session)
 
     async def find_nearest_places(
@@ -22,6 +23,7 @@ class GeoService:
             street: Optional[str] = None,
     ) -> List[dict]:
 
+        # Delegate to repository so filtering logic stays close to the query.
         rows = await self.repository.find_nearest(
             latitude=latitude,
             longitude=longitude,
@@ -36,11 +38,13 @@ class GeoService:
 
     async def search(self, request: SearchRequest) -> SearchResponse:
 
+        # Parse free-form context into structured filters.
         parsed = parse_context(request.context)
 
         try:
             latitude, longitude = request.parse_location()
         except Exception:
+            # Defensive: invalid coordinates should not trigger a 500.
             return SearchResponse(results=[])
 
         category = parsed.category

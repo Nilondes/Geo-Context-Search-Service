@@ -28,6 +28,7 @@ class PlacesRepository:
             4326,
         )
 
+        # PostGIS distance in meters when using geography columns.
         distance_expr = func.ST_Distance(Place.geog, point)
 
         stmt = (
@@ -42,6 +43,7 @@ class PlacesRepository:
             .limit(limit)
         )
 
+        # Optional filters applied at SQL level for better performance.
         if category:
             stmt = stmt.where(Place.category == category)
 

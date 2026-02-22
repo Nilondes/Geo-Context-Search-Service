@@ -9,6 +9,7 @@ from pydantic import BaseModel
 
 _MORPH = pymorphy3.MorphAnalyzer()
 
+# Data files allow updating categories/brands without code changes.
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 CATEGORIES_PATH = DATA_DIR / "categories.json"
 BRANDS_PATH = DATA_DIR / "brands.json"
@@ -89,6 +90,7 @@ _CATEGORY_LEMMAS = _build_lemma_keyword_sets(_CATEGORIES_CONFIG)
 
 _BRAND_LEMMA_MAP = {}
 for b in _BRANDS:
+    # Store brand names by lemma sequence to match across cases/inflections.
     b_norm = _normalize_text(b)
     tokens = _tokens(b_norm)
     lemmas = _lemmatize_list(tokens)
@@ -105,6 +107,7 @@ def _detect_street(original_text: str, normalized_text: str) -> Optional[str]:
             street_norm = street_raw.lower()
             tokens = _tokens(street_norm)
             lemmas = _lemmatize_list(tokens)
+            # Return lemmatized street to align with how addresses are stored.
             return " ".join(lemmas).strip()
     m2 = re.search(r"на\s+([а-яa-z0-9\-\s]+)$", normalized_text)
     if m2:

@@ -33,14 +33,17 @@ class SeedPlace:
 
 
 def _geog_point(lon: float, lat: float) -> str:
+    # PostGIS geography expects SRID=4326;POINT(lon lat)
     return f"SRID=4326;POINT({lon} {lat})"
 
 
 def _meters_to_degrees_lat(meters: float) -> float:
+    # Approximation is fine for small distances at city scale.
     return meters / 111_320.0
 
 
 def _meters_to_degrees_lon(meters: float, lat: float) -> float:
+    # Adjust for latitude to keep east-west jitter reasonable.
     return meters / (111_320.0 * max(0.1, abs(math.cos(math.radians(lat)))))
 
 
